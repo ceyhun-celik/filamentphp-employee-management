@@ -8,6 +8,7 @@ use App\Models\City;
 use App\Models\Country;
 use App\Models\Employee;
 use App\Models\State;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\DatePicker;
@@ -37,17 +38,17 @@ class EmployeeResource extends Resource
                         ->label('Country')
                         ->options(Country::select('id', 'name')->pluck('name', 'id'))
                         ->reactive()
-                        ->afterStateUpdated(fn (callable $set) => $set('state_id', null))
+                        ->afterStateUpdated(fn (Closure $set) => $set('state_id', null))
                         ->required(),
                     Select::make('state_id')
                         ->label('State')
-                        ->options(fn (callable $get) => State::select('id', 'name')->where('country_id', $get('country_id'))->pluck('name', 'id') ?? [])
+                        ->options(fn (Closure $get) => State::select('id', 'name')->where('country_id', $get('country_id'))->pluck('name', 'id') ?? [])
                         ->reactive()
-                        ->afterStateUpdated(fn (callable $set) => $set('city_id', null))
+                        ->afterStateUpdated(fn (Closure $set) => $set('city_id', null))
                         ->required(),
                     Select::make('city_id')
                         ->label('City')
-                        ->options(fn (callable $get) => City::select('id', 'name')->where('id', $get('state_id'))->pluck('name', 'id') ?? [])
+                        ->options(fn (Closure $get) => City::select('id', 'name')->where('state_id', $get('state_id'))->pluck('name', 'id') ?? [])
                         ->required(),
                     Select::make('department_id')
                         ->relationship('department', 'name')
