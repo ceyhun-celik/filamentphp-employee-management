@@ -26,7 +26,7 @@ class EmployeeResource extends Resource
 {
     protected static ?string $model = Employee::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
     public static function form(Form $form): Form
     {
@@ -49,13 +49,25 @@ class EmployeeResource extends Resource
                         ->label('City')
                         ->options(fn (callable $get) => City::select('id', 'name')->where('id', $get('state_id'))->pluck('name', 'id') ?? [])
                         ->required(),
-                    Select::make('department_id')->relationship('department', 'name')->required(),
-                    TextInput::make('first_name')->required(),
-                    TextInput::make('last_name')->required(),
-                    TextInput::make('address')->required(),
-                    TextInput::make('zip_code')->required(),
-                    DatePicker::make('birth_date')->required(),
-                    DatePicker::make('date_hired')->required(),
+                    Select::make('department_id')
+                        ->relationship('department', 'name')
+                        ->required(),
+                    TextInput::make('first_name')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('last_name')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('address')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('zip_code')
+                        ->required()
+                        ->maxLength(5),
+                    DatePicker::make('birth_date')
+                        ->required(),
+                    DatePicker::make('date_hired')
+                        ->required(),
                 ])
             ]);
     }
