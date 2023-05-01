@@ -28,9 +28,8 @@ class CityResource extends Resource
         return $form
             ->schema([
                 Card::make()->schema([
-                    Select::make('state_id')
-                        ->relationship('state', 'name'),
-                    TextInput::make('name'),
+                    Select::make('state_id')->relationship('state', 'name')->required(),
+                    TextInput::make('name')->required(),
                 ])
             ]);
     }
@@ -54,14 +53,14 @@ class CityResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -69,5 +68,5 @@ class CityResource extends Resource
             'create' => Pages\CreateCity::route('/create'),
             'edit' => Pages\EditCity::route('/{record}/edit'),
         ];
-    }    
+    }
 }
