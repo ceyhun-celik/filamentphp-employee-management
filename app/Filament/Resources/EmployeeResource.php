@@ -4,7 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EmployeeResource\Pages;
 use App\Filament\Resources\EmployeeResource\RelationManagers;
+use App\Models\City;
+use App\Models\Country;
 use App\Models\Employee;
+use App\Models\State;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\DatePicker;
@@ -30,9 +33,22 @@ class EmployeeResource extends Resource
         return $form
             ->schema([
                 Card::make()->schema([
-                    Select::make('country_id')->relationship('country', 'name')->required(),
-                    Select::make('state_id')->relationship('state', 'name')->required(),
-                    Select::make('city_id')->relationship('city', 'name')->required(),
+                    Select::make('country_id')
+                        ->label('Country')
+                        ->options(Country::select('id', 'name')->pluck('name', 'id'))
+                        ->reactive()
+                        ->afterStateUpdated(fn (callable $set) => $set('state_id', null))
+                        ->required(),
+                    Select::make('state_id')
+                        ->label('State')
+                        ->options(fn (callable $get) => State::select('id', 'name')->where('country_id', $get('country_id'))->pluck('name', 'id') ?? [])
+                        ->reactive()
+                        ->afterStateUpdated(fn (callable $set) => $set('city_id', null))
+                        ->required(),
+                    Select::make('city_id')
+                        ->label('City')
+                        ->options(fn (callable $get) => City::select('id', 'name')->where('id', $get('state_id'))->pluck('name', 'id') ?? [])
+                        ->required(),
                     Select::make('department_id')->relationship('department', 'name')->required(),
                     TextInput::make('first_name')->required(),
                     TextInput::make('last_name')->required(),
